@@ -37,11 +37,10 @@ async function loadMainPrompts() {
           name: "Add Employee",
           value: "ADD_EMPLOYEE"
         },
-        // Bonus
-        // {
-        //   name: "Remove Employee",
-        //   value: "REMOVE_EMPLOYEE"
-        // },
+        {
+          name: "Remove Employee",
+          value: "REMOVE_EMPLOYEE"
+        },
         {
           name: "Update Employee Role",
           value: "UPDATE_EMPLOYEE_ROLE"
@@ -93,6 +92,8 @@ async function loadMainPrompts() {
       return viewEmployeesByDepartment();
     case "VIEW_EMPLOYEES_BY_MANAGER":
       return viewEmployeesByManager();
+    case "REMOVE_EMPLOYEE":
+      return removeEmployee();
     case "ADD_EMPLOYEE":
       return addEmployee();
     case "UPDATE_EMPLOYEE_ROLE":
@@ -170,6 +171,29 @@ async function viewEmployeesByManager() {
 
   console.log("\n");
   console.table(employees);
+
+  loadMainPrompts();
+}
+
+async function removeEmployee() {
+  const employees = await db.findAllEmployees();
+
+  const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+    value: id,
+    name: `${first_name} ${last_name}`
+  }));
+
+  const { employeeId } = await prompt([
+    {
+      type: "list",
+      name: "employeeId",
+      message: "Which employee would you like to remove?",
+      choices: employeeChoices
+    }
+  ]);
+
+  const remove = await db.deleteEmployee(employeeId);
+  console.log("Employee has been removed");
 
   loadMainPrompts();
 }

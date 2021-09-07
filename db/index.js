@@ -31,6 +31,10 @@ class DB {
     return this.connection.query("INSERT INTO employee SET ?", employee);
   }
 
+  deleteEmployee(employee) {
+    return this.connection.query("DELETE FROM employee WHERE id = ?",employee);
+  }
+
 
   // Update the given employee's role
   updateEmployeeRole(employeeId, roleId) {
