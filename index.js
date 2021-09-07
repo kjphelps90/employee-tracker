@@ -29,11 +29,10 @@ async function loadMainPrompts() {
           name: "View All Employees By Department",
           value: "VIEW_EMPLOYEES_BY_DEPARTMENT"
         },
-        // Bonus
-        // {
-        //   name: "View All Employees By Manager",
-        //   value: "VIEW_EMPLOYEES_BY_MANAGER"
-        // },
+        {
+          name: "View All Employees By Manager",
+          value: "VIEW_EMPLOYEES_BY_MANAGER"
+        },
         {
           name: "Add Employee",
           value: "ADD_EMPLOYEE"
@@ -92,6 +91,8 @@ async function loadMainPrompts() {
       return viewEmployees();
     case "VIEW_EMPLOYEES_BY_DEPARTMENT":
       return viewEmployeesByDepartment();
+    case "VIEW_EMPLOYEES_BY_MANAGER":
+      return viewEmployeesByManager();
     case "ADD_EMPLOYEE":
       return addEmployee();
     case "UPDATE_EMPLOYEE_ROLE":
@@ -147,6 +148,32 @@ async function viewEmployeesByDepartment() {
 
   loadMainPrompts();
 }
+
+async function viewEmployeesByManager() {
+  const managers = await db.findAllPossibleManagers(0);
+
+  const managerChoices = managers.map(({ id, first_name, last_name }) => ({
+    name: `${first_name} ${last_name}`,
+    value: id
+   }));
+
+  const { managerId } = await prompt([
+    {
+      type: "list",
+      name: "managerId",
+      message: "Which manager would you like to see employees for?",
+      choices: managerChoices
+    }
+  ]);
+
+  const employees = await db.findAllEmployeesByManager(managerId);
+
+  console.log("\n");
+  console.table(employees);
+
+  loadMainPrompts();
+}
+
 
 async function updateEmployeeRole() {
   const employees = await db.findAllEmployees();
