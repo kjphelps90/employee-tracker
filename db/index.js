@@ -63,6 +63,7 @@ class DB {
   // Create a new role
   createRole(role) {
     return this.connection.query(
+      "INSERT INTO role SET ?", role
       // TODO: YOUR CODE HERE
 
       );
@@ -79,6 +80,7 @@ class DB {
   // Create a new department
   createDepartment(department) {
     return this.connection.query(
+      "INSERT INTO department SET ?", department
       // TODO: YOUR CODE HERE
     );
   }
