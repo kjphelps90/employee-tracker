@@ -51,6 +51,7 @@ class DB {
   // Find all roles, join with departments to display the department name
   findAllRoles() {
     return this.connection.query(
+      "SELECT role.id, title, salary, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id"
       // SELECT THE FOLLOWING COLUMNS:
       // id, title, salary FROM role TABLE AND department name FROM department TABLE
       // YOU NEED TO USE LEFT JOIN TO JOIN role and department TABLES
