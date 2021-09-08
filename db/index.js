@@ -104,6 +104,17 @@ class DB {
       managerId
     );
   }
+
+  deleteRole(role) {
+    return this.connection.query("DELETE FROM role WHERE id = ?",role);
+  }
+
+  deleteDept(dept) {
+    return this.connection.query("DELETE FROM department WHERE id = ?",dept);
+  }
+
+
+
 }
 
 module.exports = new DB(connection);

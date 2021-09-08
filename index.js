@@ -58,11 +58,10 @@ async function loadMainPrompts() {
           name: "Add Role",
           value: "ADD_ROLE"
         },
-        //  Bonus
-        // {
-        //   name: "Remove Role",
-        //   value: "REMOVE_ROLE"
-        // },
+        {
+          name: "Remove Role",
+          value: "REMOVE_ROLE"
+        },
         {
           name: "View All Departments",
           value: "VIEW_DEPARTMENTS"
@@ -71,11 +70,10 @@ async function loadMainPrompts() {
           name: "Add Department",
           value: "ADD_DEPARTMENT"
         },
-        //  Bonus
-        // {
-        //   name: "Remove Department",
-        //   value: "REMOVE_DEPARTMENT"
-        // },
+        {
+          name: "Remove Department",
+          value: "REMOVE_DEPARTMENT"
+        },
         {
           name: "Quit",
           value: "QUIT"
@@ -106,6 +104,10 @@ async function loadMainPrompts() {
       return viewRoles();
     case "ADD_ROLE":
       return addRole();
+    case "REMOVE_ROLE":
+      return removeRole();
+    case "REMOVE_DEPARTMENT":
+      return removeDept();
     default:
       return quit();
   }
@@ -363,6 +365,52 @@ async function addEmployee() {
   console.log(
     `Added ${employee.first_name} ${employee.last_name} to the database`
   );
+
+  loadMainPrompts();
+}
+
+async function removeRole() {
+  const roles = await db.findAllRoles();
+
+  const roleChoices = roles.map(({ id, title }) => ({
+    value: id,
+    name: title
+  }));
+
+  const { roleId } = await prompt([
+    {
+      type: "list",
+      name: "roleId",
+      message: "Which role would you like to remove?",
+      choices: roleChoices
+    }
+  ]);
+
+  const remove = await db.deleteRole(roleId);
+  console.log("Role has been removed");
+
+  loadMainPrompts();
+}
+
+async function removeDept() {
+  const departments = await db.findAllDepartments();
+
+  const deptChoices = departments.map(({ id, name }) => ({
+    value: id,
+    name: name
+  }));
+
+  const { deptId } = await prompt([
+    {
+      type: "list",
+      name: "deptId",
+      message: "Which department would you like to remove?",
+      choices: deptChoices
+    }
+  ]);
+
+  const remove = await db.deleteDept(deptId);
+  console.log("Department has been removed");
 
   loadMainPrompts();
 }
