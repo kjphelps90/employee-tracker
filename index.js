@@ -1,6 +1,7 @@
 const { prompt } = require("inquirer");
 const logo = require("asciiart-logo");
 const db = require("./db");
+const { updateEmployeeManager } = require("./db");
 require("console.table");
 
 init();
@@ -45,11 +46,10 @@ async function loadMainPrompts() {
           name: "Update Employee Role",
           value: "UPDATE_EMPLOYEE_ROLE"
         },
-        // Bonus
-        // {
-        //   name: "Update Employee Manager",
-        //   value: "UPDATE_EMPLOYEE_MANAGER"
-        // },
+        {
+          name: "Update Employee Manager",
+          value: "UPDATE_EMPLOYEE_MANAGER"
+        },
         {
           name: "View All Roles",
           value: "VIEW_ROLES"
@@ -96,6 +96,8 @@ async function loadMainPrompts() {
       return addEmployee();
     case "UPDATE_EMPLOYEE_ROLE":
       return updateEmployeeRole();
+    case "UPDATE_EMPLOYEE_MANAGER":
+      return updateManager();
     case "VIEW_DEPARTMENTS":
       return viewDepartments();
     case "ADD_DEPARTMENT":
@@ -242,6 +244,51 @@ async function updateEmployeeRole() {
   await db.updateEmployeeRole(employeeId, roleId);
 
   console.log("Updated employee's role");
+
+  loadMainPrompts();
+}
+
+async function updateManager() {
+  const employees = await db.findAllEmployees();
+
+  const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+    value: id,
+    name: `${first_name} ${last_name}`
+    // CREATE TWO PROPERTIES name AMD value FOR THIS OBJECT. THE PROPERTY name SHOULD CONTAIN THE CONCATENATION OF THE FIRST HAME AND THE LAST NAME.
+    // THE PROPERTY value SHOULD CONTAIN id.
+    // THIS OBJECT FOR EACH MANAGER WILL RETURN TO MAP() TO CONSTRUCT AN ARRAY TO BE RETURNED AND BE STORED TO managerChoices.
+    // TODO: YOUR CODE HERE
+
+  }));
+
+  const { employeeId } = await prompt([
+    {
+      type: "list",
+      name: "employeeId",
+      message: "Which employee's manager do you want to update?",
+      choices: employeeChoices
+    }
+  ]);
+
+  const managers = await db.findAllPossibleManagers(0);
+
+  const managerChoices = managers.map(({ id, title }) => ({
+    name: title,
+    value: id
+  }));
+
+  const { managerId } = await prompt([
+    {
+      type: "list",
+      name: "managerId",
+      message: "Which manager do you want to assign the selected employee?",
+      choices: managerChoices
+    }
+  ]);
+
+  await db.updateEmployeeManager(employeeId, managerId);
+
+  console.log("Updated employee's manager");
 
   loadMainPrompts();
 }
