@@ -272,8 +272,8 @@ async function updateManager() {
 
   const managers = await db.findAllPossibleManagers(0);
 
-  const managerChoices = managers.map(({ id, title }) => ({
-    name: title,
+  const managerChoices = managers.map(({ id, first_name, last_name }) => ({
+    name: `${first_name} ${last_name}`,
     value: id
   }));
 
